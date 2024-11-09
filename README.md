@@ -2,7 +2,7 @@
 
 #### Overview
 
-`ImageSpriteSheetAnimator` is a Unity script that allows you to play sprite sheet animations, which can be useful for playing GIFs or frame-based animations in your Unity projects. This script lets you control the speed, looping, and display of animations using sprite sheets, giving you more flexibility than directly using GIF files in Unity.
+`ImageSpriteSheetAnimator` is a Unity script that lets you play sprite sheet animations, which can be useful for creating GIF-like or frame-based animations. The script provides control over speed, looping, and animation playback, offering more flexibility than directly using GIF files in Unity.
 
 ---
 
@@ -11,18 +11,18 @@
 - **Frame Control**: Play animations frame by frame from a sprite sheet.
 - **Looping**: Optionally loop the animation.
 - **One-shot Animation**: Play the animation once and stop.
-- **Frame Rate Control**: Easily adjust the frame rate to control the speed of the animation.
+- **Frame Rate Control**: Adjust the frame rate to control the speed of the animation.
 - **Stop and Reset**: Stop the animation and reset it to the first frame.
 
 ---
 
 ### Setup
 
-1. **Create a UI Image**: This will be used to display the sprite sheet animation.
+1. **Create a UI Image**: This will display the sprite sheet animation.
    - Right-click in the **Hierarchy** > **UI** > **Image**.
 
-2. **Import Sprite Sheet**: You need to export your GIF as a sprite sheet.
-   - Export the GIF as a sprite sheet using tools like **[ezgif.com](https://ezgif.com/sprite-sheet)**.
+2. **Import Sprite Sheet**: Export your GIF as a sprite sheet.
+   - Use a tool like **[ezgif.com](https://ezgif.com/sprite-sheet)** to export the GIF as a sprite sheet.
    - Import the sprite sheet into Unity.
    - Set the **Texture Type** to **Sprite (2D and UI)** and **Sprite Mode** to **Multiple** in the **Inspector**.
 
@@ -30,8 +30,8 @@
    - Open the **Sprite Editor** and slice the sprite sheet into individual sprites.
 
 4. **Add the Script**: Attach the `ImageSpriteSheetAnimator` script to the GameObject with the `Image` component.
-   - In the **Inspector**, assign the `Image` component to the `targetImage` field in the script.
-   - Assign the array of sprites to the `animationFrames` field (the sliced sprites from your sprite sheet).
+   - In the **Inspector**, assign the `Image` component to the `targetImage` field.
+   - Assign the array of sprites (sliced frames from your sprite sheet) to the `animationFrames` field.
 
 ---
 
@@ -39,7 +39,7 @@
 
 #### Start Animation
 
-You can start the animation by calling the `StartAnimation` method, which will loop the animation:
+Start the animation by calling the `StartAnimation` method, which will loop the animation:
 
 ```csharp
 public class GIFPlayer : MonoBehaviour
@@ -57,7 +57,7 @@ public class GIFPlayer : MonoBehaviour
 
 #### Play One-shot Animation
 
-If you only want the animation to play once, use the `PlayOneShotAnimation` method:
+If you want the animation to play once without looping, use the `PlayOneShotAnimation` method:
 
 ```csharp
 public class GIFPlayer : MonoBehaviour
@@ -75,7 +75,7 @@ public class GIFPlayer : MonoBehaviour
 
 #### Stop the Animation
 
-You can stop the animation at any time by calling:
+You can stop the animation at any time with:
 
 ```csharp
 spriteSheetAnimator.StopAnimation();
@@ -103,7 +103,7 @@ spriteSheetAnimator.SetFrameRate(0.05f); // Adjust frame rate to 0.05 seconds pe
 
 ### Notes
 
-- **Sprite Sheet Layout**: Make sure your sprite sheet is laid out in a grid, with each frame placed side by side or in a grid format.
+- **Sprite Sheet Layout**: Ensure your sprite sheet is laid out in a grid, with each frame placed side by side or in a grid format.
 - **Performance**: This method is ideal for simple animations, UI effects, or games that don’t need the complexity of video files or animated textures.
 - **Unity Version**: This script is designed for Unity's UI system and works well with **Unity 2020.x** and above.
 
