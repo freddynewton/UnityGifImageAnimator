@@ -1,11 +1,8 @@
+using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Animator for images to show gifs.
-/// </summary>
 public class ImageSpriteSheetAnimator : MonoBehaviour
 {
     [Header("Sprite Animation Settings")]
@@ -17,25 +14,27 @@ public class ImageSpriteSheetAnimator : MonoBehaviour
 
     private bool loop = true;
     private int currentFrame;
-    private Task animationTask;
+    private Coroutine animationCoroutine;
+    private Sprite[] animationFrames;
 
     /// <summary>
     /// Starts the sprite sheet animation with looping behavior.
     /// </summary>
     /// <param name="animationFrames">Array of sprites to animate through.</param>
     /// <param name="loop">Set to true for infinite looping, false for a one-time animation.</param>
-    public async void StartAnimation(Sprite[] animationFrames, bool loop)
+    public void StartAnimation(Sprite[] animationFrames, bool loop)
     {
         if (animationFrames.Length > 0)
         {
+            this.animationFrames = animationFrames;
+
             // Stop any ongoing animation before starting a new one
-            if (animationTask != null)
+            if (animationCoroutine != null)
             {
-                await animationTask; // Wait for the current task to complete
+                StopCoroutine(animationCoroutine);
             }
 
-            animationTask = PlayAnimation(animationFrames, loop);
-            await animationTask; // Run the animation task asynchronously
+            animationCoroutine = StartCoroutine(PlayAnimation(animationFrames, loop));
         }
     }
 
@@ -44,15 +43,11 @@ public class ImageSpriteSheetAnimator : MonoBehaviour
     /// </summary>
     public void StopAnimation()
     {
-        animationTask = null;
-    }
-
-    /// <summary>
-    /// Stops the looped animation and prevents further looping.
-    /// </summary>
-    public void StopLoop()
-    {
-        loop = false;
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+            animationCoroutine = null;
+        }
     }
 
     /// <summary>
@@ -77,19 +72,19 @@ public class ImageSpriteSheetAnimator : MonoBehaviour
         if (animationFrames.Length > 0)
         {
             StopAnimation(); // Stop any ongoing animation
-            animationTask = PlayOneShot(animationFrames);
+            animationCoroutine = StartCoroutine(PlayOneShot(animationFrames));
         }
     }
 
     /// <summary>
     /// Plays the sprite sheet animation once without looping.
     /// </summary>
-    private async Task PlayOneShot(Sprite[] animationFrames)
+    private IEnumerator PlayOneShot(Sprite[] animationFrames)
     {
         foreach (var frame in animationFrames)
         {
             targetImage.sprite = frame;
-            await Task.Delay((int)(frameRate * 1000)); // Convert to milliseconds
+            yield return new WaitForSeconds(frameRate);
         }
     }
 
@@ -118,17 +113,17 @@ public class ImageSpriteSheetAnimator : MonoBehaviour
     public void SetLoop(bool shouldLoop)
     {
         loop = shouldLoop;
-        if (animationTask != null)
+        if (animationCoroutine != null)
         {
-            StopAnimation(); // Stop the current animation
-            StartAnimation(targetImage.sprite != null ? new Sprite[1] : new Sprite[0], loop); // Restart with the new loop setting
+            StopCoroutine(animationCoroutine); // Stop the current animation
+            animationCoroutine = StartCoroutine(PlayOneShot(animationFrames)); // Play the first frame
         }
     }
 
     /// <summary>
     /// Plays the sprite sheet animation, looping if 'loop' is true.
     /// </summary>
-    private async Task PlayAnimation(Sprite[] animationFrames, bool loop)
+    private IEnumerator PlayAnimation(Sprite[] animationFrames, bool loop)
     {
         this.loop = loop;
 
@@ -138,7 +133,7 @@ public class ImageSpriteSheetAnimator : MonoBehaviour
             foreach (var frame in animationFrames)
             {
                 targetImage.sprite = frame;
-                await Task.Delay((int)(frameRate * 1000)); // Wait for the next frame
+                yield return new WaitForSeconds(frameRate); // Wait for the next frame
             }
         }
     }
